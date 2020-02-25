@@ -1,0 +1,87 @@
+{% extends "core/base_bs.html" %}
+{% load i18n staticfiles humanize %}
+
+{% block page_title %}<title>{% trans "Mobile Money Checkout" %} - {{ service.project_name }} </title>{% endblock %}
+{% block head_style %}
+    {{ block.super }}
+    <link rel='stylesheet' href="{% static 'ikwen/css/momo.css' %}" />
+{% endblock %}
+
+{% block content %}
+    <div id="content" class="container">
+        <div class="visible-xs" style="float: left; width: 100%; padding: 15px 0"></div>
+        <div id="checkout">
+            <div style="margin-bottom: 45px">
+                <div class="pull-left" style="width: 50%">
+                    <img src="{{ settings.IKWEN_MEDIA_URL }}{{ payment_mean.logo.name }}" alt="{{ payment_mean.name }}" class="img-responsive" style="height: 45px" />
+                </div>
+                <div class="pull-right">
+                    {% if request.session.merchant_name %}
+                        <h4 class="text-right visible-xs" style="margin-top: 0">{{ request.session.merchant_name|truncatechars:"18" }}</h4>
+                        <h4 class="text-right hidden-xs" style="margin-top: 0">{{ request.session.merchant_name }}</h4>
+                    {% endif %}
+                    <div style="color: #03A9F4">
+                        <i class="glyphicon glyphicon-shopping-cart" style="color: #3F51B5; font-size: 21px; margin-right: 5px"></i>
+                        {{ config.currency_symbol }} <strong>{{ amount|floatformat:"0"|intcomma }}</strong>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <h3 style="text-align: center"> {% trans "Pay with" %} {{ payment_mean.name }} </h3>
+            <p class="text-muted" style="text-align: center"> {% trans "Type your phone number and submit" %} </p>
+            <p class="momo-warning">{% blocktrans %}
+                Your phone number must be registered to
+                <a href="https://www.mtncameroon.net/en/mtn-mobile-money/" target="_blank">MTN Mobile Money</a> service{% endblocktrans %}
+            </p>
+            <form onsubmit="return false">{% csrf_token %}
+                <div class="form-group" style="margin-top: .4em">
+                    <label for="phone" class="sr-only">{% trans "Phone number" %}</label>
+                    <input id="phone" class="form-control input-sm" type="text" name="phone" value="{{ phone }}" />
+                </div>
+                <div class="form-group">
+                    <button id="do-pay" class="btn btn-primary btn-block btn-sm"> {% trans "Submit" %} </button>
+                    {% include 'core/snippets/spinner.html' %}
+                </div>
+                <div id="transaction-result" class="text-info"></div>
+            </form>
+        </div>
+        <div style="margin: 45px 15px">
+            <a href="{% if request.session.cancel_url %}{{ request.session.cancel_url }}{% else %}{{ request.META.HTTP_REFERER }}{% endif %}"
+               class="cancel-payment">{% trans "Cancel" %}</a>
+        </div>
+        <div class="clear"></div>
+    </div>
+{% endblock %}
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript">
+        (function() {
+            $('#do-pay').click(function () {
+                var phone = $('#phone').val();
+                if (phone.length !== 9 && phone.length !== 12) {
+                    alert('Invalid phone number');
+                    return;
+                }
+                if (!$(this).hasClass('btn-primary')) return;
+                $(this).removeClass('btn-primary').addClass('btn-default');
+                $('#checkout .spinner').show();
+                setTimeout(function () {
+                    $.ajax({
+                        url: '{% url 'confirm_checkout' %}',
+                        data: {phone: phone},
+                        error: function(req, status, error) {
+                            $('#checkout .spinner').hide();
+                            $('#transaction-result').removeClass('text-info').addClass('text-danger')
+                                    .text(status + ": " + error);
+                            $('#do-pay').removeClass('btn-default').addClass('btn-primary');
+                        },
+                        success: function(data) {
+                            window.location = "{% url 'shopping:cart' request.session.object_id %}";
+                        }
+                    });
+                }, 3000);
+            });
+        })()
+    </script>
+    {{ config.scripts|safe }}
+{% endblock %}
