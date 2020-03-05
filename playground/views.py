@@ -207,8 +207,8 @@ def after_order_confirmation(order, update_stock=True):
         increment_history_field(customer_ref, 'earnings_history', order.retailer_earnings)
 
         dara_umbrella = Dara.objects.using(UMBRELLA).get(pk=dara.id)
-        if dara_umbrella.level == 1 and dara_umbrella.xp == 1:
-            dara_umbrella.xp = 2
+        if dara_umbrella.level == 1 and dara_umbrella.xp == 2:
+            dara_umbrella.xp = 3
             dara_umbrella.raise_bonus_cash(100)
             dara_umbrella.save()
 
@@ -314,7 +314,7 @@ def referee_registration_callback(request, *args, **kwargs):
     referrer = request.COOKIES.get('referrer')
     if referrer:
         try:
-            service = get_service_instance()
+            service = kwargs.get('service', get_service_instance())
             dara_member = Member.objects.get(pk=referrer)
             set_customer_dara(service, dara_member, request.user)
         except:
@@ -339,8 +339,8 @@ def set_customer_dara(service, referrer, member):
             return
 
         dara_umbrella = Dara.objects.using(UMBRELLA).get(member=referrer)
-        if dara_umbrella.level == 1 and dara_umbrella.xp == 2:
-            dara_umbrella.xp = 3
+        if dara_umbrella.level == 1 and dara_umbrella.xp == 1:
+            dara_umbrella.xp = 2
             dara_umbrella.raise_bonus_cash(100)
             dara_umbrella.save()
 
