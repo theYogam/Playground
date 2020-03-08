@@ -13,7 +13,11 @@
         <div id="checkout">
             <div style="margin-bottom: 45px">
                 <div class="pull-left" style="width: 50%">
-                    <img src="{{ settings.IKWEN_MEDIA_URL }}{{ payment_mean.logo.name }}" alt="{{ payment_mean.name }}" class="img-responsive" style="height: 45px" />
+                   {% if request.GET.method %}
+                        <img src="{% static 'ikwen/img/logo-OM-200x166.png' %}" alt="orange-money" class="img-responsive" style="height: 45px" />
+                    {% else %}
+                        <img src="{{ settings.IKWEN_MEDIA_URL }}{{ payment_mean.logo.name }}" alt="{{ payment_mean.name }}" class="img-responsive" style="height: 45px" />
+                    {% endif %}
                 </div>
                 <div class="pull-right">
                     {% if request.session.merchant_name %}
@@ -27,11 +31,15 @@
                 </div>
                 <div class="clearfix"></div>
             </div>
-            <h3 style="text-align: center"> {% trans "Pay with" %} {{ payment_mean.name }} </h3>
+            <h3 style="text-align: center"> {% trans "Pay with" %}{% if request.GET.method %} Orange Money  {% else %} {{ payment_mean.name }} {% endif %}</h3>
             <p class="text-muted" style="text-align: center"> {% trans "Type your phone number and submit" %} </p>
-            <p class="momo-warning">{% blocktrans %}
-                Your phone number must be registered to
-                <a href="https://www.mtncameroon.net/en/mtn-mobile-money/" target="_blank">MTN Mobile Money</a> service{% endblocktrans %}
+            <p class="momo-warning">
+                {% trans 'Your phone number must be registered to' %}
+                {% if not request.GET.method %}
+                    <a href="https://www.mtncameroon.net/en/mtn-mobile-money/" target="_blank">MTN Mobile Money</a> service
+                {% else %}
+                    <span style="color: #EF620E;">Orange Money</span> service
+                {% endif %}
             </p>
             <form onsubmit="return false">{% csrf_token %}
                 <div class="form-group" style="margin-top: .4em">

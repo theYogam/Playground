@@ -85,7 +85,12 @@ def confirm_checkout(request, *args, **kwargs):
     subject = _("Order successful")
     reward_pack_list, coupon_count = reward_member(order.retailer, member, Reward.PAYMENT,
                                                    amount=order.items_cost, model_name='trade.Order')
-    send_order_confirmation_email(request, subject, buyer_name, buyer_email, order, reward_pack_list=reward_pack_list)
+    try:
+        dara = Dara.objects.using(UMBRELLA).get(member=member)
+        is_dara = True
+    except:
+        is_dara = False
+    send_order_confirmation_email(request, subject, buyer_name, buyer_email, is_dara, order, reward_pack_list=reward_pack_list)
     if getattr(settings, 'UNIT_TESTING', False):
         send_order_confirmation_sms(buyer_name, buyer_phone, order)
     else:
@@ -206,7 +211,7 @@ def after_order_confirmation(order, update_stock=True):
         increment_history_field(customer_ref, 'turnover_history', raw_provider_revenue)
         increment_history_field(customer_ref, 'earnings_history', order.retailer_earnings)
 
-        dara_umbrella = Dara.objects.using(UMBRELLA).get(pk=dara.id)
+        dara_umbrella = Dara.objects.using(UMBRELLA).get(member=dara.member)
         if dara_umbrella.level == 1 and dara_umbrella.xp == 2:
             dara_umbrella.xp = 3
             dara_umbrella.raise_bonus_cash(100)
@@ -278,7 +283,7 @@ def send_dara_notification_email(dara_service, order):
         logger.error("Failed to notify %s Dara after follower purchase." % service, exc_info=True)
 
 
-def send_order_confirmation_email(request, subject, buyer_name, buyer_email, order, message=None,
+def send_order_confirmation_email(request, subject, buyer_name, buyer_email, is_dara, order, message=None,
                                   reward_pack_list=None):
     service = get_service_instance()
     coupon_count = 0
@@ -288,15 +293,21 @@ def send_order_confirmation_email(request, subject, buyer_name, buyer_email, ord
             coupon_count += pack.count
     else:
         template_name = 'playground/mails/order_notice.html'
-
     invitation_url = 'https://daraja.ikwen.com/daraja/companies/'
     crcy = currencies(request)['CURRENCY']
-    html_content = get_mail_content(subject, template_name=template_name,
-                                    extra_context={'buyer_name': buyer_name, 'order': order, 'message': message,
-                                                   'IS_BANK': getattr(settings, 'IS_BANK', False),
-                                                   'coupon_count': coupon_count, 'crcy': crcy,
-                                                   'invitation_url': invitation_url})
     sender = 'Daraja Playground <no-reply@ikwen.com>'
+    if is_dara:
+        html_content = get_mail_content(subject, template_name=template_name,
+                                        extra_context={'buyer_name': buyer_name, 'order': order, 'message': message,
+                                                       'IS_BANK': getattr(settings, 'IS_BANK', False),
+                                                       'coupon_count': coupon_count, 'crcy': crcy,
+                                                       'invitation_url': invitation_url, 'is_dara': is_dara})
+    else:
+        html_content = get_mail_content(subject, template_name=template_name,
+                                        extra_context={'buyer_name': buyer_name, 'order': order, 'message': message,
+                                                       'IS_BANK': getattr(settings, 'IS_BANK', False),
+                                                       'coupon_count': coupon_count, 'crcy': crcy, 'is_dara': is_dara})
+
     msg = XEmailMessage(subject, html_content, sender, [buyer_email])
     bcc = [email.strip() for email in service.config.notification_email.split(',') if email.strip()]
     bcc.append(service.member.email)

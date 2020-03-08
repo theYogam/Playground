@@ -1,0 +1,69 @@
+{% load i18n static humanize %}
+<div class="modal fade" id="payment-methods" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content modal-info">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{% trans "Pay now" %}</h4>
+            </div>
+            <div class="modal-body">
+                <form id="payment-start-flow" method="post">{% csrf_token %}
+                    <input type="hidden" id="payment-product-id" name="product_id" />
+                    <input type="hidden" id="amount" name="amount" />
+                    <input type="hidden" name="payment_conf" value="{% if payment_conf %}{{ payment_conf }}{% else %}default{% endif %}" />
+                    <ul class="row" style="padding-left: 0">
+                        <li class="col-sm-4 payment-method{% if payment_mean_list|length <= 2 %} col-sm-offset-2{% endif %}"
+                            {% if mtn_momo %}data-action-url="{% url mtn_momo.action_url_name %}"{% endif %}>
+                            <a class="logo" style="background: #ffca06" title="{% trans "Pay with MTN Mobile Money" %}">
+                                <img src="{% static 'ikwen/img/logo_mtn_mobile_money.jpg' %}" height="90"/>
+                            </a>
+                        </li>
+                        <li class="col-sm-4 payment-method om"
+                            {% if om %}data-action-url="{% url mtn_momo.action_url_name %}?method=om"{% endif %}>
+                            <a class="logo" style="background: #15171e" title="{% trans "Pay with Orange Money" %}">
+                                <img src="{% static 'ikwen/img/logo-OM-200x166.png' %}" height="90" />
+                            </a>
+                        </li>
+                        {% if dara_cash %}
+                            <li class="col-sm-4 payment-method dara-cash"
+                                {% if dara_cash %}data-action-url="{% url dara_cash.action_url_name %}?mean=dara-cash"{% endif %}>
+                                <a class="logo" style="border: 3px solid #3e59f0; height: 90px" title="{% trans "Pay with Dara Cash" %}">
+                                    <img src="{% static 'ikwen/img/logo-daraja-100.png' %}" height="80" />
+                                </a>
+                                <span style="border-radius: 3px; display: block; text-align: center; margin-top: 5px; padding: 2px;">
+                                    <sup class="text-muted">XAF</sup>
+{#                                    <strong>{{ dara_cash.balance|floatformat:"0"|intcomma }}</strong>#}
+                                    <strong>5,000</strong>
+                                </span>
+                            </li>
+                        {% endif %}
+                        {% if config.is_pro_version and paypal %}
+                            <li class="col-sm-4 payment-method" data-action-url="{% url paypal.action_url_name %}?mean=paypal">
+                                <a class="logo" href="#" style="border: 1px solid #eee">
+                                    <img src="{% static 'ikwen/img/payment-logo.jpg' %}" height="90" style="width: 100%"/>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    <div class="clearfix"></div>
+                </form>
+                {% include 'core/snippets/spinner.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+{% if not payment_cancel_default %}
+<script>
+    (() => {
+        $('body').on('click', '.payment-start', function() {
+            let productId = $(this).data('product-id');
+            $('#payment-product-id').val(productId);
+            $('#payment-methods').modal('show');
+        }).on('click', '.payment-method', function() {
+            let actionURL = $(this).data('action-url');
+            $('#payment-methods .spinner').show();
+            $('form#payment-start-flow').prop('action', actionURL).submit()
+        });
+    })()
+</script>
+{% endif %}
