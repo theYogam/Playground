@@ -214,7 +214,7 @@ def after_order_confirmation(order, update_stock=True):
         dara_umbrella = Dara.objects.using(UMBRELLA).get(member=dara.member)
         if dara_umbrella.level == 1 and dara_umbrella.xp == 2:
             dara_umbrella.xp = 3
-            dara_umbrella.raise_bonus_cash(100)
+            dara_umbrella.raise_bonus_cash(200)
             dara_umbrella.save()
 
     category_list = []
