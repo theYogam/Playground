@@ -7,6 +7,7 @@ import requests
 from currencies.context_processors import currencies
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
@@ -276,7 +277,7 @@ def send_dara_notification_email(dara_service, order):
                                                        }
                                         )
         sender = 'Daraja Playground <no-reply@ikwen.com>'
-        msg = XEmailMessage(subject, html_content, sender, [dara_service.member.email])
+        msg = EmailMessage(subject, html_content, sender, [dara_service.member.email])
         msg.content_subtype = "html"
         Thread(target=lambda m: m.send(), args=(msg,)).start()
     except:
@@ -293,20 +294,16 @@ def send_order_confirmation_email(request, subject, buyer_name, buyer_email, is_
             coupon_count += pack.count
     else:
         template_name = 'playground/mails/order_notice.html'
-    invitation_url = 'https://daraja.ikwen.com/daraja/companies/'
+    # invitation_url = 'https://daraja.ikwen.com/daraja/companies/'
+    invitation_url = 'https://daraja.ikwen.com/'
     crcy = currencies(request)['CURRENCY']
     sender = 'Daraja Playground <no-reply@ikwen.com>'
+    extra_context = {'buyer_name': buyer_name, 'order': order, 'message': message,
+                     'IS_BANK': getattr(settings, 'IS_BANK', False),
+                     'coupon_count': coupon_count, 'crcy': crcy, 'is_dara': is_dara}
     if is_dara:
-        html_content = get_mail_content(subject, template_name=template_name,
-                                        extra_context={'buyer_name': buyer_name, 'order': order, 'message': message,
-                                                       'IS_BANK': getattr(settings, 'IS_BANK', False),
-                                                       'coupon_count': coupon_count, 'crcy': crcy,
-                                                       'invitation_url': invitation_url, 'is_dara': is_dara})
-    else:
-        html_content = get_mail_content(subject, template_name=template_name,
-                                        extra_context={'buyer_name': buyer_name, 'order': order, 'message': message,
-                                                       'IS_BANK': getattr(settings, 'IS_BANK', False),
-                                                       'coupon_count': coupon_count, 'crcy': crcy, 'is_dara': is_dara})
+        extra_context['invitation_url'] = invitation_url
+    html_content = get_mail_content(subject, template_name=template_name, extra_context=extra_context)
 
     msg = XEmailMessage(subject, html_content, sender, [buyer_email])
     bcc = [email.strip() for email in service.config.notification_email.split(',') if email.strip()]
@@ -378,9 +375,9 @@ def set_customer_dara(service, referrer, member):
             subject = _("I just joined %s !" % service.project_name)
         html_content = get_mail_content(subject, template_name='playground/mails/referee_joined.html',
                                         extra_context={'referred_service_name': service.project_name, 'referee': member,
-                                                       'referred_service_url': service.url
+                                                       'cta_url': 'https://daraja.ikwen.com/'
                                                        })
-        msg = XEmailMessage(subject, html_content, sender, [referrer.email])
+        msg = EmailMessage(subject, html_content, sender, [referrer.email])
         msg.content_subtype = "html"
         Thread(target=lambda m: m.send(), args=(msg, )).start()
     except:
