@@ -3,99 +3,99 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-23 20:51+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2020-03-24 17:10+0100\n"
+"PO-Revision-Date: 2020-03-24 17:11+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 2.0.6\n"
 
-#: playground/views.py:86
+#: playground/views.py:87
 msgid "Order successful"
-msgstr ""
+msgstr "Commande réussie"
 
-#: playground/views.py:267
+#: playground/views.py:268
 msgid "New transaction on Playground"
-msgstr ""
+msgstr "Nouvelle transaction sur Playground"
 
-#: playground/views.py:373
+#: playground/views.py:374
 #, python-format
 msgid "I'm back on %s !"
-msgstr ""
+msgstr "Je suis de retour sur %s !"
 
-#: playground/views.py:375
+#: playground/views.py:376
 #, python-format
 msgid "I just joined %s !"
-msgstr ""
+msgstr "Je viens de m'inscrire sur %s !"
 
 #: templates/billing/momo_checkout.html:4
 msgid "Mobile Money Checkout"
-msgstr ""
+msgstr "Payez avec MTN Mobile Money"
 
 #: templates/billing/momo_checkout.html:34
 msgid "Pay with"
-msgstr ""
+msgstr "Payer avec"
 
 #: templates/billing/momo_checkout.html:35
 msgid "Type your phone number and submit"
-msgstr ""
+msgstr "Renseignez votre numéro de téléphone et soumettez"
 
 #: templates/billing/momo_checkout.html:37
 msgid "Your phone number must be registered to"
-msgstr ""
+msgstr "Votre numéro de téléphone doit être enregistré sur"
 
 #: templates/billing/momo_checkout.html:46
 msgid "Phone number"
-msgstr ""
+msgstr "Téléphone"
 
 #: templates/billing/momo_checkout.html:50
 msgid "Submit"
-msgstr ""
+msgstr "Envoyer"
 
 #: templates/billing/momo_checkout.html:58
 msgid "Cancel"
-msgstr ""
+msgstr "Annuler"
 
 #: templates/billing/snippets/modal_payment_options.html:7
 msgid "Pay now"
-msgstr ""
+msgstr "Payez"
 
 #: templates/billing/snippets/modal_payment_options.html:17
 msgid "Pay with MTN Mobile Money"
-msgstr ""
+msgstr "Payez avec MTN Mobile Money"
 
 #: templates/billing/snippets/modal_payment_options.html:23
 msgid "Pay with Orange Money"
-msgstr ""
+msgstr "Payez avec Orange Money"
 
 #: templates/billing/snippets/modal_payment_options.html:30
 msgid "Pay with Dara Cash"
-msgstr ""
+msgstr "Payez avec Dara Cash"
 
 #: templates/shopping/snippets/checkout_confirmation.html:13
 msgid "Status"
-msgstr ""
+msgstr "Statut"
 
 #: templates/shopping/snippets/checkout_confirmation.html:18
 msgid "Remit to"
-msgstr ""
+msgstr "Remettre à"
 
 #: templates/shopping/snippets/checkout_confirmation.html:20
-#: templates/shopping/snippets/checkout_confirmation.html:50
+#: templates/shopping/snippets/checkout_confirmation.html:54
 msgid "Deliver to"
-msgstr ""
+msgstr "Livré à"
 
 #: templates/shopping/snippets/checkout_confirmation.html:29
 msgid "Postal code"
-msgstr ""
+msgstr "Code postal"
 
 #: templates/shopping/snippets/checkout_confirmation.html:35
 #, python-format
@@ -104,30 +104,41 @@ msgid ""
 "                    A confirmation email was sent to %(email)s.\n"
 "                "
 msgstr ""
+"\n"
+"                   Un e-mail de confirmation a été envoyé à %(email)s.\n"
+"                "
 
 #: templates/shopping/snippets/checkout_confirmation.html:38
-#: templates/shopping/snippets/checkout_confirmation.html:59
+#: templates/shopping/snippets/checkout_confirmation.html:63
 msgid "Thank you for shopping with us."
-msgstr ""
+msgstr "Nous vous remercions pour vos achats avec notre service."
 
-#: templates/shopping/snippets/checkout_confirmation.html:39
-#: templates/shopping/snippets/checkout_confirmation.html:70
+#: templates/shopping/snippets/checkout_confirmation.html:40
+#: templates/shopping/snippets/checkout_confirmation.html:75
 msgid "Back to Playground"
-msgstr ""
+msgstr "Retournez sur Playground"
 
-#: templates/shopping/snippets/checkout_confirmation.html:46
+#: templates/shopping/snippets/checkout_confirmation.html:42
+#: templates/shopping/snippets/checkout_confirmation.html:77
+msgid "Back home"
+msgstr "Retour accueil"
+
+#: templates/shopping/snippets/checkout_confirmation.html:50
 #, python-format
 msgid ""
 "\n"
 "                <h3>Your order was issued with success under number <strong>"
 "%(rcc)s</strong>.</h3>"
 msgstr ""
+"\n"
+"                <h3>Votre commande a été émise avec succès sous le numéro "
+"<strong>%(rcc)s</strong>.</h3>"
 
-#: templates/shopping/snippets/checkout_confirmation.html:58
+#: templates/shopping/snippets/checkout_confirmation.html:62
 msgid "We will contact you as soon as the package is shipped."
-msgstr ""
+msgstr "Nous vous contacterons dès que le paquet est expédié."
 
-#: templates/shopping/snippets/checkout_confirmation.html:63
+#: templates/shopping/snippets/checkout_confirmation.html:67
 #, python-format
 msgid ""
 "\n"
@@ -135,3 +146,7 @@ msgid ""
 "<a href=\"%(console_url)s\">timeline</a>.\n"
 "                    "
 msgstr ""
+"\n"
+"                           Vous pouvez toujours suivre l'état de votre "
+"commande sur votre <a href=\"%(console_url)s\">timeline</a>.\n"
+"                    "

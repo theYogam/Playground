@@ -27,6 +27,7 @@ from ikwen_kakocase.kakocase.models import OperatorProfile, SOLD_OUT_EVENT, NEW_
 from ikwen_kakocase.kako.models import Product
 from ikwen_kakocase.shopping.utils import parse_order_info, send_order_confirmation_sms
 from ikwen_kakocase.shopping.models import Customer
+from ikwen_kakocase.shopping.views import Cart
 from ikwen_kakocase.trade.models import Order
 from ikwen_kakocase.trade.utils import generate_tx_code
 
@@ -382,3 +383,14 @@ def set_customer_dara(service, referrer, member):
         Thread(target=lambda m: m.send(), args=(msg, )).start()
     except:
         logger.error("%s - Error while setting Customer Dara", exc_info=True)
+
+
+class PlaygroundCart(Cart):
+
+    def get_context_data(self, **kwargs):
+        context = super(PlaygroundCart, self).get_context_data(**kwargs)
+        try:
+            context['dara'] = Dara.objects.get(member=self.request.user)
+        except:
+            pass
+        return context

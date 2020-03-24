@@ -11,7 +11,7 @@ from ikwen_kakocase.kakocase.views import Welcome, AdminHome
 from ikwen_kakocase.trade.provider.views import ProviderDashboard, CCMDashboard
 
 # from playground.views import save_ghost_user
-from playground.views import confirm_checkout
+from playground.views import confirm_checkout, PlaygroundCart
 
 admin.autodiscover()
 
@@ -25,6 +25,8 @@ urlpatterns = patterns(
     url(r'^billing/', include('ikwen.billing.urls', namespace='billing')),
     url(r'^marketing/', include('ikwen_kakocase.commarketing.urls', namespace='marketing')),
     url(r'^sales/', include('ikwen_kakocase.sales.urls', namespace='sales')),
+    url(r'^shopping/cart/$', PlaygroundCart.as_view(), name='cart'),
+    url(r'^shopping/cart/(?P<order_id>[-\w]+)/$', PlaygroundCart.as_view(), name='cart'),
     url(r'^shopping/', include('ikwen_kakocase.shopping.urls', namespace='shopping')),
     url(r'^playground/confirm_checkout', confirm_checkout, name='confirm_checkout'),
 
