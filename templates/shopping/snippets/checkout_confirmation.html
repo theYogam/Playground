@@ -37,9 +37,11 @@
                 {% endblocktrans %}</p>
                 <p style="margin-top: .5em">{% trans "Thank you for shopping with us." %}</p>
                 {% if dara %}
-                    <a class="btn btn-lg btn-block btn-success" href="https://daraja.ikwen.com/" style="margin-top: 27px">{% trans 'Back to Playground' %}</a>
+                    <a class="btn btn-lg btn-success hidden-xs" href="https://daraja.ikwen.com/" style="margin-top: 27px">{% trans 'Back to Playground' %}</a>
+                    <a class="btn btn-lg btn-block btn-success visible-xs" href="https://daraja.ikwen.com/" style="margin-top: 27px">{% trans 'Back to Playground' %}</a>
                 {% else %}
-                    <a class="btn btn-lg btn-block btn-success" href="https://daraja.ikwen.com/daraja/playground" style="margin-top: 27px">{% trans 'Back home' %}</a>
+                    <a class="btn btn-lg btn-success hidden-xs" href="https://daraja.ikwen.com/daraja/playground" style="margin-top: 27px">{% trans 'Back home' %}</a>
+                    <a class="btn btn-lg btn-block btn-success visible-xs" href="https://daraja.ikwen.com/daraja/playground" style="margin-top: 27px">{% trans 'Back home' %}</a>
                 {% endif %}
             </div>
 {#            <div class="highlight col-sm-5 col-sm-offset-2">#}
@@ -61,6 +63,11 @@
                 </div>
                 <p style="margin-top: 1em">{% trans "We will contact you as soon as the package is shipped." %}</p>
                 <p>{% trans "Thank you for shopping with us." %}</p>
+                {% if dara %}
+                    <a class="btn btn-lg btn-success hidden-xs" href="https://daraja.ikwen.com/" style="margin-top: 27px">{% trans 'Back to Playground' %}</a>
+                {% else %}
+                    <a class="btn btn-lg btn-success hidden-xs" href="https://daraja.ikwen.com/daraja/playground" style="margin-top: 27px">{% trans 'Back home' %}</a>
+                {% endif %}
             </div>
             <div class="highlight col-sm-5 col-sm-offset-2">
                 {% if user.is_authenticated %}
@@ -72,9 +79,9 @@
                 {% endif %}
             </div>
             {% if dara %}
-                <a class="btn btn-lg btn-block btn-success" href="https://daraja.ikwen.com/" style="margin-top: 27px">{% trans 'Back to Playground' %}</a>
+                <a class="btn btn-lg btn-block btn-success visible-xs" href="https://daraja.ikwen.com/" style="margin-top: 27px">{% trans 'Back to Playground' %}</a>
             {% else %}
-                <a class="btn btn-lg btn-block btn-success" href="https://daraja.ikwen.com/daraja/playground" style="margin-top: 27px">{% trans 'Back home' %}</a>
+                <a class="btn btn-lg btn-block btn-success visible-xs" href="https://daraja.ikwen.com/daraja/playground" style="margin-top: 27px">{% trans 'Back home' %}</a>
             {% endif %}
         {% endif %}
         {% endwith %}
