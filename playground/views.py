@@ -89,10 +89,9 @@ def confirm_checkout(request, *args, **kwargs):
                                                    amount=order.items_cost, model_name='trade.Order')
     try:
         dara = Dara.objects.using(UMBRELLA).get(member=member)
-        is_dara = True
     except:
-        is_dara = False
-    send_order_confirmation_email(request, subject, buyer_name, buyer_email, is_dara, order, reward_pack_list=reward_pack_list)
+        dara = None
+    send_order_confirmation_email(request, subject, buyer_name, buyer_email, dara, order, reward_pack_list=reward_pack_list)
     if getattr(settings, 'UNIT_TESTING', False):
         send_order_confirmation_sms(buyer_name, buyer_phone, order)
     else:
@@ -274,7 +273,9 @@ def send_dara_notification_email(dara_service, order):
                                                        'dara_earnings': order.referrer_earnings,
                                                        'transaction_time': order.updated_on.strftime('%Y-%m-%d %H:%M:%S'),
                                                        'account_balance': dara_service.balance,
-                                                       'dashboard_url': dashboard_url})
+                                                       'dashboard_url': dashboard_url,
+                                                       'dara': dara_service
+                                                       })
         sender = 'Daraja Playground <no-reply@ikwen.com>'
         msg = EmailMessage(subject, html_content, sender, [dara_service.member.email])
         msg.content_subtype = "html"
@@ -283,7 +284,7 @@ def send_dara_notification_email(dara_service, order):
         logger.error("Failed to notify %s Dara after follower purchase." % service, exc_info=True)
 
 
-def send_order_confirmation_email(request, subject, buyer_name, buyer_email, is_dara, order, message=None,
+def send_order_confirmation_email(request, subject, buyer_name, buyer_email, dara, order, message=None,
                                   reward_pack_list=None):
     service = get_service_instance()
     coupon_count = 0
@@ -299,8 +300,8 @@ def send_order_confirmation_email(request, subject, buyer_name, buyer_email, is_
     sender = 'Daraja Playground <no-reply@ikwen.com>'
     extra_context = {'buyer_name': buyer_name, 'order': order, 'message': message,
                      'IS_BANK': getattr(settings, 'IS_BANK', False),
-                     'coupon_count': coupon_count, 'crcy': crcy, 'is_dara': is_dara}
-    if is_dara:
+                     'coupon_count': coupon_count, 'crcy': crcy, 'dara': dara}
+    if dara:
         extra_context['invitation_url'] = invitation_url
     html_content = get_mail_content(subject, template_name=template_name, extra_context=extra_context)
 
@@ -374,7 +375,7 @@ def set_customer_dara(service, referrer, member):
             subject = _("I just joined %s !" % service.project_name)
         html_content = get_mail_content(subject, template_name='playground/mails/referee_joined.html',
                                         extra_context={'referred_service_name': service.project_name, 'referee': member,
-                                                       'cta_url': 'https://daraja.ikwen.com/'
+                                                       'dara': dara_umbrella, 'cta_url': 'https://daraja.ikwen.com/'
                                                        })
         msg = EmailMessage(subject, html_content, sender, [referrer.email])
         msg.content_subtype = "html"
