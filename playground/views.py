@@ -270,13 +270,11 @@ def send_dara_notification_email(dara_service, order):
         dashboard_url = 'https://daraja.ikwen.com/daraja/dashboard/'
         html_content = get_mail_content(subject, template_name=template_name,
                                         extra_context={'currency_symbol': config.currency_symbol,
-                                                       'amount': order.total_cost,
+                                                       'amount': order.items_cost,
                                                        'dara_earnings': order.referrer_earnings,
                                                        'transaction_time': order.updated_on.strftime('%Y-%m-%d %H:%M:%S'),
                                                        'account_balance': dara_service.balance,
-                                                       'dashboard_url': dashboard_url
-                                                       }
-                                        )
+                                                       'dashboard_url': dashboard_url})
         sender = 'Daraja Playground <no-reply@ikwen.com>'
         msg = EmailMessage(subject, html_content, sender, [dara_service.member.email])
         msg.content_subtype = "html"
