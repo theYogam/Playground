@@ -25,7 +25,7 @@ from ikwen.rewarding.utils import reward_member
 from ikwen_kakocase.kako.utils import mark_duplicates
 from ikwen_kakocase.kakocase.models import OperatorProfile, SOLD_OUT_EVENT, NEW_ORDER_EVENT
 from ikwen_kakocase.kako.models import Product
-from ikwen_kakocase.shopping.utils import parse_order_info, send_order_confirmation_sms
+from ikwen_kakocase.shopping.utils import parse_order_info, send_order_confirmation_sms, set_logicom_earnings_and_stats
 from ikwen_kakocase.shopping.models import Customer
 from ikwen_kakocase.shopping.views import Cart
 from ikwen_kakocase.trade.models import Order
@@ -133,14 +133,20 @@ def after_order_confirmation(order, update_stock=True):
 
     packages_info = order.split_into_packages(dara)
 
+    if delcom != service and delcom_profile_original.payment_delay == OperatorProfile.STRAIGHT:
+        set_logicom_earnings_and_stats(order)
+
     for provider_db in packages_info.keys():
         package = packages_info[provider_db]['package']
         provider_earnings = package.provider_earnings
         raw_provider_revenue = package.provider_revenue
         provider_revenue = raw_provider_revenue
         if package.provider == delcom:
+            provider_revenue += order.delivery_option.cost + order.delivery_option.packing_cost
             provider_earnings += order.delivery_earnings
-            provider_revenue += order.delivery_earnings
+        else:
+            provider_revenue += order.delivery_option.packing_cost
+            provider_earnings += order.delivery_option.packing_cost * (100 - config.ikwen_share_rate) / 100
         provider_profile_umbrella = packages_info[provider_db]['provider_profile']
         provider_profile_original = provider_profile_umbrella.get_from(provider_db)
         provider_original = provider_profile_original.service
@@ -307,6 +313,16 @@ def send_order_confirmation_email(request, subject, buyer_name, buyer_email, dar
 
     msg = XEmailMessage(subject, html_content, sender, [buyer_email])
     bcc = [email.strip() for email in service.config.notification_email.split(',') if email.strip()]
+    delcom = order.delivery_option.company
+    if service != delcom:
+        db = delcom.database
+        add_database(db)
+        try:
+            delcom_config = OperatorProfile.objects.using(db).get(service=delcom)
+            bcc += [email.strip() for email in delcom_config.notification_email.split(',') if email.strip()]
+            bcc.append(delcom.member.email)
+        except:
+            pass
     bcc.append(service.member.email)
     msg.bcc = list(set(bcc))
     msg.content_subtype = "html"
